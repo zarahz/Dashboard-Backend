@@ -1,0 +1,13 @@
+# IF THERE'S A GIT CONFLICT IN THIS FILE, DON'T SOLVE IT MANUALLY!
+# INSTEAD EXECUTE `prisma migrate fix`
+# Prisma Migrate lockfile v1
+# Read more about conflict resolution here: TODO
+
+20200418190824-initial
+20200418192643-google_creds
+20200420122449-expanded_creds
+20200420123122-data_type_float
+20200420144455-added_pic_attr
+20200420210145-google_id
+20200420210355-google_id_float
+20200420210711-google_id_string

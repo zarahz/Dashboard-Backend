@@ -1,0 +1,33 @@
+// scheme://user:password@ip:port/database
+datasource db {
+  provider = "postgresql"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id                  Int                @default(autoincrement()) @id
+  email               String             @unique
+  firstName           String
+  lastName            String
+  role                Role               @default(USER)
+  googleCredentials   GoogleCredentials? @relation(fields: [googleCredentialsId], references: [id])
+  googleCredentialsId Int?
+}
+
+model GoogleCredentials {
+  id           Int    @default(autoincrement()) @id
+  accessToken  String
+  refreshToken String
+  scope        String
+  tokenType    String
+  expiryDate   Int
+}

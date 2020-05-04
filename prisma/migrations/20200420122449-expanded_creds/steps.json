@@ -1,0 +1,26 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "GoogleCredentials",
+      "field": "scope",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "GoogleCredentials",
+      "field": "tokenType",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "GoogleCredentials",
+      "field": "expiryDate",
+      "type": "Int",
+      "arity": "Required"
+    }
+  ]
+}

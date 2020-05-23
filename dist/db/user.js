@@ -1,7 +1,8 @@
-const { userRepository } = require('./index')
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const prisma_1 = require("./prisma");
 async function createUser(user, tokens) {
-    return await userRepository.create({
+    return await prisma_1.userRepository.create({
         data: {
             googleId: user.id,
             email: user.email,
@@ -18,11 +19,11 @@ async function createUser(user, tokens) {
                 }
             }
         }
-    })
+    });
 }
-
-async function updateUserTokens(id, tokens) {
-    return await userRepository.update({
+exports.createUser = createUser;
+async function updateUserTokens(googleId, tokens) {
+    return await prisma_1.userRepository.update({
         data: {
             googleCredentials: {
                 update: {
@@ -34,28 +35,23 @@ async function updateUserTokens(id, tokens) {
                 }
             }
         },
-        where: { googleId: id }
-    })
+        where: { googleId }
+    });
 }
-
+exports.updateUserTokens = updateUserTokens;
 async function userExists(googleId) {
-    const dbUser = await userRepository.findOne({
+    const dbUser = await prisma_1.userRepository.findOne({
         where: { googleId }
     });
     return (dbUser) ? true : false;
 }
-
+exports.userExists = userExists;
 async function getUser(id) {
-    const dbUser = await userRepository.findOne({
+    const dbUser = await prisma_1.userRepository.findOne({
         where: { id },
         include: { googleCredentials: true }
     });
     return dbUser;
 }
-
-module.exports = {
-    updateUserTokens,
-    createUser,
-    userExists,
-    getUser
-}
+exports.getUser = getUser;
+//# sourceMappingURL=user.js.map

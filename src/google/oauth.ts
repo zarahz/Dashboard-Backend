@@ -1,19 +1,20 @@
-const { Router } = require("express");
-const { google } = require('googleapis');
-const { userExists, updateUserTokens, createUser } = require('../db/user')
+import { Router } from "express";
+import { google } from "googleapis";
+import { userExists, updateUserTokens, createUser } from "../db/user";
+import { Credentials, GoogleUser } from "../interfaces/user";
 
 const router = Router();
 
 // client id : 3512234566-bh3miuubr6l7aid8pb245nfvnuclpr9f.apps.googleusercontent.com
 // client secret : QS7LN2f6PXvhBHrOo1rdfLc6
 
-function generateAuthClient(credentials = undefined) {
+export function generateAuthClient(credentials: Credentials | undefined = undefined) {
     const authClient = new google.auth.OAuth2(
         '3512234566-bh3miuubr6l7aid8pb245nfvnuclpr9f.apps.googleusercontent.com',
         'QS7LN2f6PXvhBHrOo1rdfLc6',
         'http://api.dashboard.zara/google/oauthcallback/'
     );
-    authClient.setCredentials(credentials);
+    credentials && authClient.setCredentials(credentials);
     return authClient;
 }
 
@@ -23,7 +24,7 @@ const scopes = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/user.birthday.read'];
 
-router.get('/login', (req, res) => {
+router.get('/login', (_req, res) => {
     const url = generateAuthClient().generateAuthUrl({
         // 'online' (default) or 'offline' (gets refresh_token)
         access_type: 'offline',
@@ -34,32 +35,34 @@ router.get('/login', (req, res) => {
 })
 
 router.get('/oauthcallback', async (req, res) => {
-    let code = req.query.code;
+    let code: string = req.query.code as string;
     const oauth2Client = generateAuthClient()
-    const { tokens } = await oauth2Client.getToken(code)
+    const tokens = (await oauth2Client.getToken(code)).tokens as Credentials
 
     oauth2Client.setCredentials(tokens);
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
 
-    const userInfo = await oauth2.userinfo.get();
-    await setTokens(req, userInfo.data, tokens);
-
+    const userInfo = (await oauth2.userinfo.get()).data as GoogleUser;
+    const user = await setTokens(userInfo, tokens);
+    req.session!.user = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+    }
     return res.redirect(302, 'http://dashboard.zara');
 })
 
-async function setTokens(req, user, tokens) {
-    if (await userExists(user.id)) {
-        const updatedUser = await updateUserTokens(user.id, tokens)
-        req.session.user = {
-            id: updatedUser.id,
-            name: updatedUser.firstName
-        }
+async function setTokens(googleUser: GoogleUser, tokens: Credentials) {
+    let dbUser;
+    if (await userExists(googleUser.id)) {
+        dbUser = await updateUserTokens(googleUser.id, tokens)
     } else {
-        const createdUser = await createUser(user, tokens)
-        req.session.user = createdUser.id;
+        dbUser = await createUser(googleUser, tokens)
     }
+    return dbUser;
 }
 
 
 
-module.exports = { router, generateAuthClient };
+export default router;

@@ -1,0 +1,18 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateField",
+      "model": "User",
+      "field": "picture",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "GoogleCredentials",
+      "field": "User",
+      "type": "User",
+      "arity": "List"
+    }
+  ]
+}

@@ -11,7 +11,10 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\app.js"
+            "args": [
+                "--inspect-brk"
+            ],
+            "program": "${workspaceFolder}\\dist\\app.js"
         }
     ]
 }

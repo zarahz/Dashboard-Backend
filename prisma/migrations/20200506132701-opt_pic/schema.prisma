@@ -1,7 +1,7 @@
 // scheme://user:password@ip:port/database
 datasource db {
   provider = "postgresql"
-  url      = "postgres://postgres:postgres@localhost:5432/dashboard"
+  url = "***"
 }
 
 generator client {
